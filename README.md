@@ -1,4 +1,42 @@
 # Python-merge-PDF-files
+LINK :
+1- https://www.youtube.com/watch?v=gFxZ3SerLoo
+2- https://learndataanalysis.org/developing-a-desktop-app-to-merge-pdf-files-with-python-and-pyqt5-full-tutorial/
+3- https://www.youtube.com/watch?v=NLQ_xSAs2DY
+
+INFORMATION : 
+
+⚠ **Before diving into development, makes sure you install PyQt5** ( _pip install PyQt5_ ) **and Pyinstaller libraries** ( _pip install pyinstaller_ )
+
+**⚠  To convert .py to .exe, use this code after opening in powershell** : 
+
+>  pyinstaller --onefile Name.py
+
+
+STEPS : 
+
+- [ ] Find libraries suitable for my project
+- [ ] Write the code without using GUI
+- [ ] Implement GUI
+
+
+DESIGN : 
+
+- [ ] Simple
+- [ ] Intuitive
+- [ ] Functional
+
+
+METHOD : 
+
+I searched online for various ways to solve my problem, unfortunately the best way to my goal is to develop it in python which with the right libraries makes it great for my work.
+So before I relied on building it in C ++, I started building it in the Python language.
+I found a site that explains the topic very well and in depth by also creating a graphical interface around the source code. I had to do several tests for the GUI and for the correct resizing of the interface.
+Finally I found a detailed guide to transform the .py file into an executable then .exe, Below you will find the link to both the source code and the .exe.
+Later my goal is to integrate the spliiter and maybe do it in C # / C / C ++ language.
+
+
+
 
 SOURCE CODE :
 
