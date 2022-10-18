@@ -1,5 +1,8 @@
 # Python-merge-PDF-files
 
+SOURCE CODE :
+
+```
 import sys, os, io
 if hasattr(sys, 'frozen'):
     os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
@@ -212,3 +215,4 @@ if __name__ == '__main__':
     demo.show()
 
     sys.exit(app.exec_())
+```
