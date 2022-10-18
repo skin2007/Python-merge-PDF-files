@@ -1,6 +1,9 @@
 LINK :
+
 1- https://www.youtube.com/watch?v=gFxZ3SerLoo
+
 2- https://learndataanalysis.org/developing-a-desktop-app-to-merge-pdf-files-with-python-and-pyqt5-full-tutorial/
+
 3- https://www.youtube.com/watch?v=NLQ_xSAs2DY
 
 INFORMATION : 
