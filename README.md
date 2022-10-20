@@ -31,13 +31,20 @@ DESIGN :
 
 METHOD : 
 
+18/10/2022
 I searched online for various ways to solve my problem, unfortunately the best way to my goal is to develop it in python which with the right libraries makes it great for my work.
 So before I relied on building it in C ++, I started building it in the Python language.
 I found a site that explains the topic very well and in depth by also creating a graphical interface around the source code. I had to do several tests for the GUI and for the correct resizing of the interface.
 Finally I found a detailed guide to transform the .py file into an executable then .exe, Below you will find the link to both the source code and the .exe.
 Later my goal is to integrate the spliiter and maybe do it in C # / C / C ++ language.
 
+20/10/2022
+after two days spent refining this project, I announce that I have finally finished splitting the PDF files, now the design is divided in half vertically where on the left you can see the MERGE tool, while on the right you find the SPLITTER tool.
+The code below is already updated to the latest version
+
 DRIVE LINKS :
+
+**OLD DOWNLOADS**
 
 1- https://drive.google.com/file/d/13jD8hZz0xw9CFtGMeh0GNUd06bXoxs7U/view?usp=sharing
 
@@ -45,7 +52,16 @@ DRIVE LINKS :
 
 3- https://drive.google.com/file/d/1jh5njp1YTe4uCEoojbVK38DmRa57Yv5P/view?usp=sharing
 
+**NEW DONLOADS**
+
+1- https://drive.google.com/file/d/1e0RibipP5yxpD-O8vmvx0ey6OBOhWOU3/view?usp=sharing
+
+2- https://drive.google.com/file/d/1A77g1q-jIMukg0Nh1g-gEckoPRZT-cL1/view?usp=sharing
+
+3- https://drive.google.com/file/d/1EFVlUDfr9SULUO0mOLYfPQ3xNgSF43RN/view?usp=sharing
+
 SOURCE CODE :
+
 
 ```
 import sys, os, io
@@ -56,7 +72,10 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
                             QDialog, QFileDialog, QMessageBox, QAbstractItemView
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon
-from PyPDF2 import PdfFileMerger
+from PyPDF2 import PdfFileMerger, PdfFileWriter, PdfFileReader
+
+
+
 
 def resource_path(relative_path):
     try:
@@ -141,7 +160,7 @@ class button(QPushButton):
         self.setText(label_text)
         self.setStyleSheet('''
             font-size: 15px;
-            width: 90px;
+            width: 117px;
             height: 20;
         ''')
 
@@ -155,22 +174,37 @@ class AppDemo(QWidget):
         self.initUI()
 
         self.buttonBrowseOutputFile.clicked.connect(self.populateFileName)
+        self.buttonSplitBrowseOutputFile.clicked.connect(self.splitFileName)
 
     def initUI(self):
-        mainLayout = QVBoxLayout()
+        generalLayout = QHBoxLayout()
+        mergeLayout = QVBoxLayout()
+        splitLayout=QVBoxLayout()
         outputFolderRow = QHBoxLayout()
+        outputSplitRow = QHBoxLayout()
         buttonLayout = QHBoxLayout()
 
 
         self.outputFile = output_field()
+        self.outputsplitFile = output_field()
         outputFolderRow.addWidget(self.outputFile)
+        outputSplitRow.addWidget(self.outputsplitFile)
 
         # browse button
         self.buttonBrowseOutputFile = button('&Save To')
         self.buttonBrowseOutputFile.setFixedHeight(self.outputFile.height)
         outputFolderRow.addWidget(self.buttonBrowseOutputFile)
+        self.buttonSplitBrowseOutputFile = button('&Import')
+        self.buttonSplitBrowseOutputFile.setFixedHeight(self.outputFile.height)
+
+#        self.buttonSplitBrowseOutputFile.setFixedHeight(self.splitFile.height)        
+        outputSplitRow.addWidget(self.buttonSplitBrowseOutputFile)
+        
+        
 
         self.pdfListWidget = ListWidget(self)
+        self.pdfsplitwidget = ListWidget(self)
+
 
 
         """
@@ -185,21 +219,35 @@ class AppDemo(QWidget):
         self.buttonMerge.clicked.connect(self.mergeFile)
         buttonLayout.addWidget(self.buttonMerge)
 
-        self.buttonClose = button('&Close')
-        self.buttonClose.clicked.connect(QApplication.quit)
-        buttonLayout.addWidget(self.buttonClose)
+    #    self.buttonClose = button('&Close')
+    #    self.buttonClose.clicked.connect(QApplication.quit)
+    #    buttonLayout.addWidget(self.buttonClose)
 
         # reset button
         self.buttonReset = button('&Reset')
         self.buttonReset.clicked.connect(self.clearQueue)
         buttonLayout.addWidget(self.buttonReset)
 
+        # split button
 
-        mainLayout.addLayout(outputFolderRow)
-        mainLayout.addWidget(self.pdfListWidget)
-        mainLayout.addLayout(buttonLayout)
+        self.splitButton = button('&Split')
+        self.splitButton.clicked.connect(self.splitFile)
+        #buttonLayout.addWidget(self.splitButton)
 
-        self.setLayout(mainLayout)
+        mergeLayout.addLayout(outputFolderRow)
+        mergeLayout.addWidget(self.pdfListWidget)
+        mergeLayout.addLayout(buttonLayout)
+
+
+        splitLayout.addLayout(outputSplitRow)
+        splitLayout.addWidget(self.pdfsplitwidget)
+        splitLayout.addWidget(self.splitButton)
+
+
+        generalLayout.addLayout(mergeLayout)
+        generalLayout.addLayout(splitLayout)
+
+        self.setLayout(generalLayout)
 
     def deleteSelected(self):
         for item in self.pdfListWidget.selectedItems():
@@ -214,6 +262,9 @@ class AppDemo(QWidget):
         if path:
             self.outputFile.setText(path)
 
+    def splitFileName(self):
+        path = self._getSplitFilePath()
+        
     def dialogMessage(self, message):
         dlg = QMessageBox(self)
         dlg.setWindowTitle('PDF Manager')
@@ -225,6 +276,12 @@ class AppDemo(QWidget):
         file_save_path, _ = QFileDialog.getSaveFileName(self, 'Save PDF file', os.getcwd(), 'PDF file (*.pdf)') 
         return file_save_path
 
+    def _getSplitFilePath(self):
+        global file_save_split_path
+        file_save_split_path, _ = QFileDialog.getOpenFileName(self, 'Save PDF file', os.getcwd(), 'PDF file (*.pdf)') 
+        self.outputsplitFile.setText(file_save_split_path)
+        return file_save_split_path 
+
     def mergeFile(self):
         if not self.outputFile.text():
             # self.dialogMessage('Save File directory is empty')    
@@ -233,7 +290,6 @@ class AppDemo(QWidget):
 
         if self.pdfListWidget.count() > 0:
             pdfMerger = PdfFileMerger()
-
             try:                                
                 for i in range(self.pdfListWidget.count()):
                     # print(self.pdfListWidget.item(i).text())
@@ -242,13 +298,32 @@ class AppDemo(QWidget):
                 pdfMerger.write(self.outputFile.text())
                 pdfMerger.close()
 
-                self.pdfListWidget.clear()
+                #self.pdfListWidget.clear()
                 self.dialogMessage('PDF merge complete.')
 
             except Exception as e:
                 self.dialogMessage(e)
         else:
             self.dialogMessage('Queue is empty')
+
+    def splitFile(self):
+        
+        inputpdf = PdfFileReader(open(file_save_split_path, "rb"))
+            
+        for i in range(inputpdf.numPages):
+            
+            output = PdfFileWriter()
+            output.addPage(inputpdf.getPage(i))
+            with open("document-page%s.pdf" % i, "wb") as outputStream:
+                output.write(outputStream)
+                self.pdfsplitwidget.addItem("document-page%s.pdf" % i)
+        self.dialogMessage('PDF split complete.')
+
+                    
+                    
+
+        
+            
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
